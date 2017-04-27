@@ -43,7 +43,7 @@ def initElo():
 
 #expected score
 def expectation(A, B):
-	return (1 / (1 + 10 ** ((B-A)/1000))) #I think these numbers are arbitrary too, actually
+	return (1 / (1 + 10**((float(B)-float(A))/1000))) #I think these numbers are arbitrary too, actually
 
 #produce the new elo value based on the old and the expected and actual scores
 def updateElo(old, exp, act): 
@@ -55,7 +55,7 @@ def calcElo():
 	global elo 
 	filledData = []
 
-	oldA, oldB, expA, expB, actA, actB = (0,)*6 #is this how memory works in python? Not like it matters at this scale
+	oldA, oldB, expA, expB, actA, actB = (0.0,)*6 #is this how memory works in python? Not like it matters at this scale
 
 	for i in range(2,len(data)): #the rows with data in them
 			for j in range(1,i): #the columns with data in them, since the matrix's lower triangular
@@ -70,14 +70,15 @@ def calcElo():
 
 		oldA = elo[index[0]-1]
 		oldB = elo[index[1]-1]
+
 		expA = expectation(oldA, oldB)
 		expB = expectation(oldB, oldA) #more efficient, but less clear, to use 1-expA
 
-		 #update elo according to result, and if it's empty or * just don't do anything
-		temp = int(temp) #python and its variable typing
+		#update elo according to result, and if it's empty or * just don't do anything
+		temp = float(temp) #python and its variable typing
 		actA = .5+(temp/2);
 		actB = .5-(temp/2);
-	
+
 		elo[index[0]-1] = updateElo(oldA, expA, actA)
 		elo[index[1]-1] = updateElo(oldB, expB, actB) 
 
@@ -86,14 +87,15 @@ def calcElo():
 #one solution is to just run it like a hundred times and average it out
 def averageElo():
 	global elo #actually, i can see how this could bite me
+	iterations = 10000
 	aElo = [0]*(len(data)-1)
 
-	for i in range(0, 10000):
+	for i in range(0, iterations):
 		initElo()
 		calcElo()
 		aElo = [x+y for x, y in zip(aElo, elo)]
 
-	aElo = [x/10000 for x in aElo]
+	aElo = [x/iterations for x in aElo]
 	
 	elo = aElo
 
@@ -111,10 +113,14 @@ def getEmpty():
 def fillEmpty():
 	global data
 	global empty
+	entry = [] #i really don't know if this is how python memory works
 
-	for entry in empty: #for each empty spot
+	for i in range(len(empty)): #for each empty spot
+			entry = empty[i]
+
 			clear()
-			print 'Matchup: ' + data[entry[0]][1] + ' vs. ' + data[1][entry[0]] #print the names (reversed for alphabetization)
+			print str(i) + " down, " + str(len(empty)-i) + " to go."
+			print 'Matchup: ' + data[0][entry[1]]+ ' vs. ' + data[entry[0]][0] #print the names (reversed for alphabetization)
 			print 'q to favour the former, w to tie, e the latter, r to refuse comparison, y to quit'
 			print entry
 
@@ -162,8 +168,6 @@ def main():
 		getEmpty()
 		random.shuffle(empty) #shuffle the list
 		fillEmpty()
-
-		print data
 
 		outputfile = open('output.csv', 'w')
 
