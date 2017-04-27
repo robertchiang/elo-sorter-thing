@@ -90,12 +90,12 @@ def averageElo():
 	iterations = 10000
 	aElo = [0]*(len(data)-1)
 
-	for i in range(0, iterations):
+	for i in range(0, iterations): #add up all the iterations
 		initElo()
 		calcElo()
 		aElo = [x+y for x, y in zip(aElo, elo)]
 
-	aElo = [x/iterations for x in aElo]
+	aElo = [int(x/iterations) for x in aElo] #and reduce them at the end, to an int so it's prettier
 	
 	elo = aElo
 
@@ -161,7 +161,7 @@ def main():
 			print 'Calculating rankings.'
 		else: 
 			clear()
-			print '1 or 2, can\'t you read?'
+			print '1 or 2, can\'t you read?' #rude
 
 	if choice == 1: 
 				
@@ -179,5 +179,12 @@ def main():
 
 		for i in range(len(elo)):
 			print data[i+1][0] + ': ' + str(elo[i])
+
+		eloOutput = open('ranking.csv', 'w')
+
+		data[0].pop(0) #remove the first (blank) entry in the first row of data, producing just a list of names
+
+		writer = csv.writer(eloOutput)
+		writer.writerows(zip(data[0], elo)) #output names and elo
 
 main()
