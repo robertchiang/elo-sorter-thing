@@ -4,10 +4,12 @@ Part one: tool for filling in a matrix with matchup data.
 
 Feed it a matrix of the form
 
+```
 [], A, B, C
 A, [], [], []
 B, x1, [], []
 C, x2, x3, [] 
+```
 
 in CSV (name it input.csv), where A, B, and C are the names of the things you're comparing (you can, of course, have more than three), x* is some value describing the result of the comparison, and [] can be whatever you want because it'll be ignored.
 
